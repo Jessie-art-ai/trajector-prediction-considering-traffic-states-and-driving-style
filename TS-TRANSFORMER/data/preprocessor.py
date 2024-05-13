@@ -154,7 +154,8 @@ class preprocess(object):
                     # found_data = past_data[past_data[:, 1] == identity].squeeze()
                     # print(found_data)
                     # print(found_data.shape)
-                    print(past_data[:, 1])
+                    print(past_data[past_data[:, 1] == identity].squeeze()[
+                                     [self.xind, self.zind]], self.past_traj_scale)
                     found_data = past_data[past_data[:, 1] == identity].squeeze()[
                                      [self.xind, self.zind]] / self.past_traj_scale
                     box_3d[self.past_frames - 1 - j, :] = torch.from_numpy(found_data).float()

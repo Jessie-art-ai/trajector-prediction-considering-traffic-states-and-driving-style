@@ -43,7 +43,7 @@ class preprocess(object):
             assert False, 'error'
 
         self.gt = np.genfromtxt(label_path, delimiter=delimiter, dtype=str)
-        # print(self.gt)
+        print(self.gt[0])
         ### changed postion from last to here ###
         # self.class_names = class_names = {'Pedestrian': 1, 'Car': 2, 'Cyclist': 3, 'Truck': 4, 'Van': 5, 'Tram': 6,
         #                                   'Person': 7, \
@@ -64,6 +64,7 @@ class preprocess(object):
             self.frame_data.append(self.gt[frame == self.gt[:, 0].astype(np.float32).astype(np.int64), :])
         self.num_fr = len(self.frames)
         ## added ##
+        print(self.frame_data[0])
 
         fr_start, fr_end = self.frames.min(), self.frames.max()
         self.init_frame = fr_start
@@ -153,8 +154,8 @@ class preprocess(object):
                 if len(past_data) > 0 and identity in past_data[:, 1]:
                     # found_data = past_data[past_data[:, 1] == identity].squeeze()
                     # print(found_data)
-                    # print(found_data.shape)
-                    print(past_data[past_data[:, 1] == identity].squeeze()[
+                    print(past_data[0])
+                    print("past_data", past_data[past_data[:, 1] == identity].squeeze()[
                                      [self.xind, self.zind]], self.past_traj_scale)
                     found_data = past_data[past_data[:, 1] == identity].squeeze()[
                                      [self.xind, self.zind]] / self.past_traj_scale
@@ -219,7 +220,7 @@ class preprocess(object):
             heading = None
 
         # print("after")
-        # print(pre_data)
+        print(pre_data[0])
         pre_motion_3D, pre_motion_mask = self.PreMotion(pre_data, valid_id)
         fut_motion_3D, fut_motion_mask = self.FutureMotion(fut_data, valid_id)
 

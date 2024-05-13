@@ -43,16 +43,17 @@ class preprocess(object):
             assert False, 'error'
 
         self.gt = np.genfromtxt(label_path, delimiter=delimiter, dtype=str)
-        # print(self.gt)
+        print(self.gt[0])
         ### changed postion from last to here ###
         # self.class_names = class_names = {'Pedestrian': 1, 'Car': 2, 'Cyclist': 3, 'Truck': 4, 'Van': 5, 'Tram': 6,
         #                                   'Person': 7, \
         #                                   'Misc': 8, 'DontCare': 9, 'Traffic_cone': 10, 'Construction_vehicle': 11,
         #                                   'Barrier': 12, 'Motorcycle': 13, \
         #                                   'Bicycle': 14, 'Bus': 15, 'Trailer': 16, 'Emergency': 17, 'Construction': 18}
-        # for row_index in range(len(self.gt)):
-        #     self.gt[row_index][2] = class_names[self.gt[row_index][2]]
-        # self.gt = self.gt.astype('float32')  # converting string type to float32
+        self.class_names = class_names = {'Car': 0}
+        for row_index in range(len(self.gt)):
+            self.gt[row_index][2] = class_names[self.gt[row_index][2]]
+        self.gt = self.gt.astype('float32')  # converting string type to float32
         ### changed postion from last to here ###
 
         # frames = self.gt[:, 0].astype(np.float32).astype(np.int) # commented
@@ -64,6 +65,7 @@ class preprocess(object):
             self.frame_data.append(self.gt[frame == self.gt[:, 0].astype(np.float32).astype(np.int64), :])
         self.num_fr = len(self.frames)
         ## added ##
+        print(self.frame_data[0])
 
         fr_start, fr_end = self.frames.min(), self.frames.max()
         self.init_frame = fr_start
@@ -153,9 +155,9 @@ class preprocess(object):
                 if len(past_data) > 0 and identity in past_data[:, 1]:
                     # found_data = past_data[past_data[:, 1] == identity].squeeze()
                     # print(found_data)
-                    # print(found_data.shape)
-                    print(past_data[past_data[:, 1] == identity].squeeze()[
-                                     [self.xind, self.zind]], self.past_traj_scale)
+                    # print(past_data[0])
+                    # print("past_data", past_data[past_data[:, 1] == identity].squeeze()[
+                    #                  [self.xind, self.zind]], self.past_traj_scale)
                     found_data = past_data[past_data[:, 1] == identity].squeeze()[
                                      [self.xind, self.zind]] / self.past_traj_scale
                     box_3d[self.past_frames - 1 - j, :] = torch.from_numpy(found_data).float()
@@ -219,7 +221,7 @@ class preprocess(object):
             heading = None
 
         # print("after")
-        # print(pre_data)
+        # print(pre_data[0])
         pre_motion_3D, pre_motion_mask = self.PreMotion(pre_data, valid_id)
         fut_motion_3D, fut_motion_mask = self.FutureMotion(fut_data, valid_id)
 

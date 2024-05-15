@@ -173,6 +173,7 @@ class ContextEncoder(nn.Module):
         ### added  state variable to tf_in_pos ###
         seq_name = data['seq']
         state_name = seq_name.split("_")[2]
+        print("state_name", state_name)
         if state_name == "clump":
             state_variable = torch.Tensor(
                 [1, 0, 0, 0])  # added extra 0's to make dim 264 for AgentAwareAttention(embed_dim // n_head)
@@ -180,6 +181,7 @@ class ContextEncoder(nn.Module):
             state_variable = torch.Tensor([0, 1, 0, 0])
         elif state_name == "neutral":
             state_variable = torch.Tensor([0, 0, 1, 0])
+        print("state_variable", state_variable)
 
         style_name = data['driving styles']
         if style_name == 0:

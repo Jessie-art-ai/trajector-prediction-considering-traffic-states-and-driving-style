@@ -43,16 +43,16 @@ class preprocess(object):
             assert False, 'error'
 
         self.gt = np.genfromtxt(label_path, delimiter=delimiter, dtype=str)
-        print(self.gt[0])
         ### changed postion from last to here ###
         # self.class_names = class_names = {'Pedestrian': 1, 'Car': 2, 'Cyclist': 3, 'Truck': 4, 'Van': 5, 'Tram': 6,
         #                                   'Person': 7, \
         #                                   'Misc': 8, 'DontCare': 9, 'Traffic_cone': 10, 'Construction_vehicle': 11,
         #                                   'Barrier': 12, 'Motorcycle': 13, \
         #                                   'Bicycle': 14, 'Bus': 15, 'Trailer': 16, 'Emergency': 17, 'Construction': 18}
-        # for row_index in range(len(self.gt)):
-        #     self.gt[row_index][2] = class_names[self.gt[row_index][2]]
-        # self.gt = self.gt.astype('float32')  # converting string type to float32
+        self.class_names = class_names = {'Car': 0}
+        for row_index in range(len(self.gt)):
+            self.gt[row_index][2] = class_names[self.gt[row_index][2]]
+        self.gt = self.gt.astype('float32')  # converting string type to float32
         ### changed postion from last to here ###
 
         # frames = self.gt[:, 0].astype(np.float32).astype(np.int) # commented
@@ -225,8 +225,11 @@ class preprocess(object):
         fut_motion_3D, fut_motion_mask = self.FutureMotion(fut_data, valid_id)
 
         # 获取驾驶风格数据，数据存储在了每个时间步的第四列
-        driving_styles = [self.gt[self.gt[:, 0] == frame, 3] for frame in self.frames]
-
+        # driving_styles = [self.gt[self.gt[:, 0] == frame, 3] for frame in self.frames]
+        # print("frame", self.frame_data[frame])
+        # print("frame_squeeze", self.frame_data[frame].squeeze())
+        driving_styles = self.frame_data[frame].squeeze()[3]
+        print("driving style pre", driving_styles)
         # pre_data : contains full history data from current frame number in frame variable
         # fut_data : contains full future data from current frame number in frame variable
         # pre_motion_3D : contains history x,y co-ords of valid agents

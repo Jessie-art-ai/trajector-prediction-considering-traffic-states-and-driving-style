@@ -91,7 +91,7 @@ def test_model(generator, save_dir, cfg):
 if __name__ == '__main__':
 
     parser = argparse.ArgumentParser()
-    parser.add_argument('--cfg', default='eot_agentformer')
+    parser.add_argument('--cfg', default='rounD_agentformer')
     parser.add_argument('--data_eval', default='test')
     parser.add_argument('--epochs', default=None)
     parser.add_argument('--gpu', type=int, default=0)

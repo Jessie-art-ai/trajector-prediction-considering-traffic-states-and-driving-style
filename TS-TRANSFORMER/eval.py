@@ -43,14 +43,14 @@ def align_gt(pred, gt):
 if __name__ == '__main__':
 
     parser = argparse.ArgumentParser()
-    parser.add_argument('--dataset', default='eot')
+    parser.add_argument('--dataset', default='rounD')
     # parser.add_argument('--results_dir', default="results/eot_agentformer/results/epoch_0045/test/gt")
-    parser.add_argument('--results_dir', default="results/eot_agentformer/results/epoch_0045/test/samples")
+    parser.add_argument('--results_dir', default="results/rounD_agentformer/results/epoch_0045/test/samples")
     parser.add_argument('--data', default='test')
     parser.add_argument('--log_file', default=None)
     args = parser.parse_args()
 
-    dataset = args.dataset.lower()
+    dataset: object = args.dataset.lower()
     results_dir = args.results_dir
     
     if dataset == 'nuscenes_pred':   # nuscenes
@@ -80,6 +80,28 @@ if __name__ == '__main__':
         seq_val = sorted(seq_val)
         seq_eval = globals()[f'seq_{args.data}']
         print("Loaded EOT data ....")
+
+    elif dataset == 'rounD':  # added for rounD dataset
+        ### added ###
+        gt_dir = 'rounD/process_5fps_2/test'
+        data_root = 'rounD/process_5fps_2'
+
+        seq_train, seq_test, seq_val = [], [], []
+        for file in os.listdir(str(data_root) + '/train/'):
+            seq_train.append(str(data_root) + '/train/' + file)
+
+        for file in os.listdir(str(data_root) + '/test/'):
+            seq_test.append(str(data_root) + '/test/' + file)
+
+        for file in os.listdir(str(data_root) + '/val/'):
+            seq_val.append(str(data_root) + '/val/' + file)
+
+        # sort
+        seq_train = sorted(seq_train)
+        seq_test = sorted(seq_test)
+        seq_val = sorted(seq_val)
+        seq_eval = globals()[f'seq_{args.data}']
+        print("Loaded rounD data ....")
         ### added ###
 
     else:                            # ETH/UCY

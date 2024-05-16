@@ -1,6 +1,6 @@
 import torch
 import numpy as np
-from torch import nn
+from torch import nn, Tensor
 from torch.nn import functional as F
 from collections import defaultdict
 from .common.mlp import MLP
@@ -135,6 +135,7 @@ class ContextEncoder(nn.Module):
         self.linear = Linear(self.model_dim + 8, self.model_dim)  # added to reduce dims from 264 to 256
 
     def forward(self, data, style_name=None):
+        global state_variable, style_variable
         traj_in = []
         for key in self.input_type:
             if key == 'pos':
@@ -194,17 +195,23 @@ class ContextEncoder(nn.Module):
         elif style_name == 2:
             style_variable = torch.Tensor([0, 0, 1, 0])
 
-        state_variable = state_variable.repeat(tf_in_pos.size()[0], tf_in_pos.size()[1], 1).type(torch.float).cuda()
-        style_variable = style_variable.repeat(tf_in_pos.size()[0], tf_in_pos.size()[1], 1).type(torch.float).cuda()
+        state_style_variable = torch.cat([state_variable, style_variable], dim=0)
+        state_style_variable = state_style_variable.repeat(tf_in_pos.size()[0], tf_in_pos.size()[1], 1).type(torch.float).cuda()
 
-        tf_in_pos = torch.cat([tf_in_pos, state_variable, style_variable], axis=-1)  # dim: [8, agents, 256 + 8]
+        # state_variable = state_variable.repeat(tf_in_pos.size()[0], tf_in_pos.size()[1], 1).type(torch.float).cuda()
+        # style_variable = style_variable.repeat(tf_in_pos.size()[0], tf_in_pos.size()[1], 1).type(torch.float).cuda()
+
+        # tf_in_pos = torch.cat([tf_in_pos, state_variable, style_variable], axis=-1)  # dim: [8, agents, 256 + 8]
+        tf_in_pos = torch.cat([tf_in_pos, state_style_variable], axis=-1)
         ### added  state variable to tf_in_pos ###
 
         # added self.linear to reduce dims from 264 to 256 # dim: [8, 1, 256]
         # concatenated with state variable
+        # data['context_enc'] = torch.cat(
+        #     [self.linear(self.tf_encoder(tf_in_pos, mask=src_mask, num_agent=data['agent_num'])), state_variable,
+        #      style_variable], axis=-1)
         data['context_enc'] = torch.cat(
-            [self.linear(self.tf_encoder(tf_in_pos, mask=src_mask, num_agent=data['agent_num'])), state_variable,
-             style_variable], axis=-1)
+            [self.linear(self.tf_encoder(tf_in_pos, mask=src_mask, num_agent=data['agent_num'])), state_style_variable], axis=-1)
 
         context_rs = data['context_enc'].view(-1, data['agent_num'], self.model_dim + 8)  # dim: [8, 1, 256 + 8] # added
 
@@ -316,10 +323,14 @@ class FutureEncoder(nn.Module):
         elif style_name == 2:
             style_variable = torch.Tensor([0, 0, 1, 0])
 
-        state_variable = state_variable.repeat(tf_in_pos.size()[0], tf_in_pos.size()[1], 1).type(torch.float).cuda()
-        style_variable = style_variable.repeat(tf_in_pos.size()[0], tf_in_pos.size()[1], 1).type(torch.float).cuda()
+        # state_variable = state_variable.repeat(tf_in_pos.size()[0], tf_in_pos.size()[1], 1).type(torch.float).cuda()
+        # style_variable = style_variable.repeat(tf_in_pos.size()[0], tf_in_pos.size()[1], 1).type(torch.float).cuda()
+        state_style_variable = torch.cat([state_variable, style_variable], dim=0)
+        state_style_variable = state_style_variable.repeat(tf_in_pos.size()[0], tf_in_pos.size()[1], 1).type(
+            torch.float).cuda()
 
-        tf_in_pos = torch.cat([tf_in_pos, state_variable, style_variable], axis=-1)  # dim: [8, agents, 256 + 8]
+        # tf_in_pos = torch.cat([tf_in_pos, state_variable, style_variable], axis=-1)  # dim: [8, agents, 256 + 8]
+        tf_in_pos = torch.cat([tf_in_pos, state_variable, state_style_variable], axis=-1)
         ### added  state variable to tf_in_pos ###
 
         tf_out, _ = self.tf_decoder(tf_in_pos, data['context_enc'], memory_mask=mem_mask, tgt_mask=tgt_mask,
@@ -402,6 +413,7 @@ class FutureDecoder(nn.Module):
 
     def decode_traj_ar(self, data, mode, context, pre_motion, pre_vel, pre_motion_scene_norm, z, sample_num,
                        need_weights=False):
+        global style_variable, state_variable
         agent_num = data['agent_num']
         if self.pred_type == 'vel':
             dec_in = pre_vel[[-1]]
@@ -464,10 +476,12 @@ class FutureDecoder(nn.Module):
             elif style_name == 2:
                 style_variable = torch.Tensor([0, 0, 1, 0])
 
-            state_variable = state_variable.repeat(tf_in_pos.size()[0], tf_in_pos.size()[1], 1).type(torch.float).cuda()
-            style_variable = style_variable.repeat(tf_in_pos.size()[0], tf_in_pos.size()[1], 1).type(torch.float).cuda()
-
-            tf_in_pos = torch.cat([tf_in_pos, state_variable, style_variable], axis=-1)  # dim: [8, agents, 256 + 8]
+            # state_variable = state_variable.repeat(tf_in_pos.size()[0], tf_in_pos.size()[1], 1).type(torch.float).cuda()
+            # style_variable = style_variable.repeat(tf_in_pos.size()[0], tf_in_pos.size()[1], 1).type(torch.float).cuda()
+            state_style_variable = torch.cat([state_variable, style_variable], dim=0)
+            state_style_variable = state_style_variable.repeat(tf_in_pos.size()[0], tf_in_pos.size()[1], 1).type(torch.float).cuda()
+            # tf_in_pos = torch.cat([tf_in_pos, state_variable, style_variable], axis=-1)  # dim: [8, agents, 256 + 8]
+            tf_in_pos = torch.cat([tf_in_pos, state_style_variable], axis=-1)  # dim: [8, agents, 256 + 8]
             ### added  state variable to tf_in_pos ###
 
             tf_out, attn_weights = self.tf_decoder(tf_in_pos, context, memory_mask=mem_mask, tgt_mask=tgt_mask,

@@ -173,7 +173,7 @@ class ContextEncoder(nn.Module):
         ### added  state variable to tf_in_pos ###
         seq_name = data['seq']
         state_name = seq_name.split("_")[3]
-        print("state_name", state_name)
+        # print("state_name", state_name)
         if state_name == "clump":
             state_variable = torch.Tensor(
                 [1, 0, 0, 0])  # added extra 0's to make dim 264 for AgentAwareAttention(embed_dim // n_head)
@@ -181,11 +181,11 @@ class ContextEncoder(nn.Module):
             state_variable = torch.Tensor([0, 1, 0, 0])
         elif state_name == "neutral":
             state_variable = torch.Tensor([0, 0, 1, 0])
-        print("state_variable", state_variable)
+        # print("state_variable", state_variable)
 
         style_name = data['driving styles']
-        print("style_name", style_name)
-        print("data", data)
+        # print("style_name", style_name)
+        # print("data", data)
         if style_name == 0:
             style_variable = torch.Tensor(
                 [1, 0, 0, 0])  # added extra 0's to make dim 264 for AgentAwareAttention(embed_dim // n_head)
@@ -744,7 +744,10 @@ class AgentFormer(nn.Module):
         else:
             mask = torch.zeros([cur_motion.shape[0], cur_motion.shape[0]]).to(device)  # dims: [agents, agents]
         self.data['agent_mask'] = mask
+        # print("in_data: ", in_data)
+        # print("in_data driving styles: ", in_data['driving styles'])
         self.data['seq'] = in_data['seq']  # added to include sequence name
+        self.data['driving styles'] = in_data['driving styles']
 
     def step_annealer(self):
         for anl in self.param_annealers:

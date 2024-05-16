@@ -64,7 +64,7 @@ class preprocess(object):
             self.frame_data.append(self.gt[frame == self.gt[:, 0].astype(np.float32).astype(np.int64), :])
         self.num_fr = len(self.frames)
         ## added ##
-        print(self.frame_data[0])
+        # print(self.frame_data[0])
 
         fr_start, fr_end = self.frames.min(), self.frames.max()
         self.init_frame = fr_start
@@ -154,9 +154,9 @@ class preprocess(object):
                 if len(past_data) > 0 and identity in past_data[:, 1]:
                     # found_data = past_data[past_data[:, 1] == identity].squeeze()
                     # print(found_data)
-                    print(past_data[0])
-                    print("past_data", past_data[past_data[:, 1] == identity].squeeze()[
-                                     [self.xind, self.zind]], self.past_traj_scale)
+                    # print(past_data[0])
+                    # print("past_data", past_data[past_data[:, 1] == identity].squeeze()[
+                    #                  [self.xind, self.zind]], self.past_traj_scale)
                     found_data = past_data[past_data[:, 1] == identity].squeeze()[
                                      [self.xind, self.zind]] / self.past_traj_scale
                     box_3d[self.past_frames - 1 - j, :] = torch.from_numpy(found_data).float()
@@ -220,7 +220,7 @@ class preprocess(object):
             heading = None
 
         # print("after")
-        print(pre_data[0])
+        # print(pre_data[0])
         pre_motion_3D, pre_motion_mask = self.PreMotion(pre_data, valid_id)
         fut_motion_3D, fut_motion_mask = self.FutureMotion(fut_data, valid_id)
 
@@ -228,8 +228,8 @@ class preprocess(object):
         # driving_styles = [self.gt[self.gt[:, 0] == frame, 3] for frame in self.frames]
         # print("frame", self.frame_data[frame])
         # print("frame_squeeze", self.frame_data[frame].squeeze())
-        driving_styles = self.frame_data[frame].squeeze()[3]
-        print("driving style pre", driving_styles)
+        driving_styles = self.frame_data[frame][0][3]
+        # print("driving style pre", driving_styles)
         # pre_data : contains full history data from current frame number in frame variable
         # fut_data : contains full future data from current frame number in frame variable
         # pre_motion_3D : contains history x,y co-ords of valid agents

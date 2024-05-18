@@ -52,7 +52,7 @@ if __name__ == '__main__':
 
     dataset: object = args.dataset.lower()
     results_dir = args.results_dir
-    
+    print(dataset)
     if dataset == 'nuscenes_pred':   # nuscenes
         data_root = f'datasets/nuscenes_pred'
         gt_dir = f'{data_root}/label/{args.data}'
@@ -81,11 +81,11 @@ if __name__ == '__main__':
         seq_eval = globals()[f'seq_{args.data}']
         print("Loaded EOT data ....")
 
-    elif dataset == 'rounD':  # added for rounD dataset
+    elif dataset == 'round':  # added for rounD dataset
         ### added ###
         gt_dir = 'rounD/process_5fps_2/test'
         data_root = 'rounD/process_5fps_2'
-
+        print("rounD_in")
         seq_train, seq_test, seq_val = [], [], []
         for file in os.listdir(str(data_root) + '/train/'):
             seq_train.append(str(data_root) + '/train/' + file)
@@ -132,7 +132,7 @@ if __name__ == '__main__':
         gt_data, _ = load_txt_file(os.path.join(gt_dir, seq_name+'.txt'))
         gt_raw = []
         for line_data in gt_data:
-            line_data = np.array([line_data.split(' ')])[:, [0, 1, 13, 15]][0].astype('float32')
+            line_data = np.array([line_data.split(',')])[:, [0, 1, 13, 15]][0].astype('float32')
             if line_data[1] == -1: continue
             gt_raw.append(line_data)
         gt_raw = np.stack(gt_raw)

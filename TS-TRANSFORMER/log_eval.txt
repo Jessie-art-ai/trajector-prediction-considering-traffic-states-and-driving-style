@@ -1,5 +1,13 @@
 loading results from None
-loading GT from datasets/EOT_split_preprocessed/test
+loading GT from rounD/process_5fps_2/test
+
+number of sequences to evaluate is 38
+loading results from results/rounD_agentformer/results/epoch_0045/test/samples
+loading GT from rounD/process_5fps_2/test
 
 
-number of sequences to evaluate is 262
+number of sequences to evaluate is 38
+------------------------------ STATS ------------------------------
+0 ADE: 0.0000
+0 FDE: 0.0000
+-------------------------------------------------------------------

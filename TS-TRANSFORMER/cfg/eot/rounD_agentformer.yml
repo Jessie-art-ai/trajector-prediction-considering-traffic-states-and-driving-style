@@ -23,7 +23,7 @@ forecast_dim                 : 2
 model_id: dlow
 pred_cfg: rounD_agentformer_pre
 #pred_epoch: 100
-pred_epoch: 0
+pred_epoch: 100
 qnet_mlp: [512, 256]
 share_eps: true
 train_w_mean: true

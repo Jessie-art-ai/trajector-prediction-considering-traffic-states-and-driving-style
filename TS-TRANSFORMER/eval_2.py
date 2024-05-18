@@ -59,8 +59,8 @@ colors = ['red', 'green', 'purple', 'darkgoldenrod', 'darkorange', 'peru', 'slat
 if __name__ == '__main__':
 
     parser = argparse.ArgumentParser()
-    parser.add_argument('--dataset', default='eot')
-    parser.add_argument('--results_dir', default="results/eot_agentformer/results/epoch_0045/test/gt")
+    parser.add_argument('--dataset', default='rounD')
+    parser.add_argument('--results_dir', default="results/rounD_agentformer/results/epoch_0005/test/gt")
     parser.add_argument('--data', default='test')
     parser.add_argument('--log_file', default=None)
     args = parser.parse_args()
@@ -97,13 +97,37 @@ if __name__ == '__main__':
         print("Loaded EOT data ....")
         ### added ###
 
+    elif dataset == 'round':  # added for rounD dataset
+        ### added ###
+        gt_dir = 'rounD/process_5fps_2/test'
+        data_root = 'rounD/process_5fps_2'
+        print("rounD_in")
+        seq_train, seq_test, seq_val = [], [], []
+        for file in os.listdir(str(data_root) + '/train/'):
+            seq_train.append(str(data_root) + '/train/' + file)
+
+        for file in os.listdir(str(data_root) + '/test/'):
+            seq_test.append(str(data_root) + '/test/' + file)
+
+        for file in os.listdir(str(data_root) + '/val/'):
+            seq_val.append(str(data_root) + '/val/' + file)
+
+        # sort
+        seq_train = sorted(seq_train)
+        seq_test = sorted(seq_test)
+        seq_val = sorted(seq_val)
+        seq_eval = globals()[f'seq_{args.data}']
+        print("Loaded rounD data ....")
+
     else:  # ETH/UCY
         gt_dir = f'datasets/eth_ucy/{args.dataset}'
         seq_train, seq_val, seq_test = get_ethucy_split(args.dataset)
         seq_eval = globals()[f'seq_{args.data}']
 
     if args.log_file is None:
-        log_file = os.path.join(results_dir, 'log_eval.txt')
+        # log_file = os.path.join(results_dir, 'log_eval.txt')
+        results_dir_2 = 'results/rounD_agentformer/log'
+        log_file = os.path.join(results_dir_2, 'log_eval.txt')
     else:
         log_file = args.log_file
     log_file = open(log_file, 'a+')
@@ -126,7 +150,7 @@ if __name__ == '__main__':
         gt_data, _ = load_txt_file(os.path.join(gt_dir, seq_name + '.txt'))
         gt_raw = []
         for line_data in gt_data:
-            line_data = np.array([line_data.split(' ')])[:, [0, 1, 13, 15]][0].astype('float32')
+            line_data = np.array([line_data.split(',')])[:, [0, 1, 13, 15]][0].astype('float32')
             if line_data[1] == -1: continue
             gt_raw.append(line_data)
         gt_raw = np.stack(gt_raw)
@@ -145,7 +169,7 @@ if __name__ == '__main__':
                 sample_list, _ = load_list_from_folder(data_file)
                 sample_all = []
                 for sample in sample_list:
-                    sample = np.loadtxt(sample, delimiter=' ', dtype='float32')  # (frames x agents) x 4
+                    sample = np.loadtxt(sample, delimiter=',', dtype='float32')  # (frames x agents) x 4
                     sample_all.append(sample)
                 all_traj = np.stack(sample_all, axis=0)  # samples x (framex x agents) x 4
             else:

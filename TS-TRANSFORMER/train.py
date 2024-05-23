@@ -119,6 +119,8 @@ if __name__ == '__main__':
 
     # print cfg.model_path, cp_path
     print("Model Path: ", cfg.model_path)
+    print("Start Epoch: ", args.start_epoch)
+    print("Num Epochs: ", cfg.num_epochs)
     for i in range(args.start_epoch, cfg.num_epochs):
         train(i)
         """ save model """

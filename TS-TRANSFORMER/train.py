@@ -78,7 +78,7 @@ if __name__ == '__main__':
     torch.set_default_dtype(torch.float32)
     device = torch.device('cuda', index=args.gpu) if torch.cuda.is_available() else torch.device('cpu')
     if torch.cuda.is_available(): torch.cuda.set_device(args.gpu)
-    
+
     time_str = get_timestring()
     log = open(os.path.join(cfg.log_dir, 'log.txt'), 'a+')
     print_log("time str: {}".format(time_str), log)
@@ -116,11 +116,15 @@ if __name__ == '__main__':
     """ start training """
     model.set_device(device)
     model.train()
+
+    # print cfg.model_path, cp_path
+    print("Model Path: ", cfg.model_path)
     for i in range(args.start_epoch, cfg.num_epochs):
         train(i)
         """ save model """
         if cfg.model_save_freq > 0 and (i + 1) % cfg.model_save_freq == 0:
             cp_path = cfg.model_path % (i + 1)
+            print("Checkpoint Path: ", cp_path)
             model_cp = {'model_dict': model.state_dict(), 'opt_dict': optimizer.state_dict(), 'scheduler_dict': scheduler.state_dict(), 'epoch': i + 1}
             torch.save(model_cp, cp_path)
 

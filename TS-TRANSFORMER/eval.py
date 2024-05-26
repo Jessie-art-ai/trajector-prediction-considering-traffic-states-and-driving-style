@@ -1,3 +1,4 @@
+import csv
 import os
 import numpy as np
 import argparse
@@ -45,7 +46,7 @@ if __name__ == '__main__':
     parser = argparse.ArgumentParser()
     parser.add_argument('--dataset', default='rounD')
     # parser.add_argument('--results_dir', default="results/eot_agentformer/results/epoch_0045/test/gt")
-    parser.add_argument('--results_dir', default="results/rounD_agentformer/results/epoch_0045/test/samples")
+    parser.add_argument('--results_dir', default="results/rounD_agentformer/results/epoch_0005/test/samples")
     parser.add_argument('--data', default='test')
     parser.add_argument('--log_file', default=None)
     args = parser.parse_args()
@@ -126,6 +127,13 @@ if __name__ == '__main__':
 
     seq_list, num_seq = load_list_from_folder(gt_dir)
     print_log('\n\nnumber of sequences to evaluate is %d' % len(seq_eval), log_file)
+
+    # 定义 CSV 列名
+    csv_filename = 'rounD/evaluation_results_sample20.csv'
+    csv_columns = ['sequence_name', 'start_frame', 'end_frame'] + [f'{x}_val' for x in stats_meter.keys()] + [f'{x}_avg'
+                                                                                                              for x in
+                                                                                                              stats_meter.keys()]
+    csv_data = []
     for seq_name in seq_eval:
         # load GT raw data
         seq_name = seq_name.split('/')[-1][:-4] # added fo EOT dataset, to filter only the sequence file name
@@ -182,9 +190,20 @@ if __name__ == '__main__':
 
             stats_str = ' '.join([f'{x}: {y.val:.4f} ({y.avg:.4f})' for x, y in stats_meter.items()])
             print_log(f'evaluating seq {seq_name:s}, forecasting frame {int(frame_list[0]):06d} to {int(frame_list[-1]):06d} {stats_str}', log_file)
-
+            # 每次序列评价结束后添加数据到csv_data
+            csv_data.append(
+                [seq_name, f'{int(frame_list[0]):06d}', f'{int(frame_list[-1]):06d}'] + [f'{meter.val:.4f}' for meter in
+                                                                                         stats_meter.values()] + [
+                    f'{meter.avg:.4f}' for meter in stats_meter.values()])
     print_log('-' * 30 + ' STATS ' + '-' * 30, log_file)
     for name, meter in stats_meter.items():
         print_log(f'{meter.count} {name}: {meter.avg:.4f}', log_file)
     print_log('-' * 67, log_file)
     log_file.close()
+# 写入 CSV 文件
+    with open(csv_filename, mode='w', newline='') as csv_file:
+        writer = csv.writer(csv_file)
+        writer.writerow(csv_columns)  # 写入列名
+        writer.writerows(csv_data)    # 写入数据
+
+    print(f'Results saved to {csv_filename}')

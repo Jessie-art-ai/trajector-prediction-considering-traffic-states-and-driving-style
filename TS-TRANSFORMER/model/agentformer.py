@@ -173,7 +173,7 @@ class ContextEncoder(nn.Module):
 
         ### added  state variable to tf_in_pos ###
         seq_name = data['seq']
-        state_name = seq_name.split("_")[3]
+        state_name = seq_name.split("_")[1]
         # print("state_name", state_name)
         if state_name == "clump":
             state_variable = torch.Tensor(
@@ -305,7 +305,7 @@ class FutureEncoder(nn.Module):
 
         ### added  state variable to tf_in_pos ###
         seq_name = data['seq']
-        state_name = seq_name.split("_")[3]
+        state_name = seq_name.split("_")[1]
         if state_name == "clump":
             state_variable = torch.Tensor(
                 [1, 0, 0, 0])  # added extra 0's to make dim 264 for AgentAwareAttention(embed_dim // n_head)
@@ -458,7 +458,7 @@ class FutureDecoder(nn.Module):
 
             ### added  state variable to tf_in_pos ###
             seq_name = data['seq']
-            state_name = seq_name.split("_")[3]
+            state_name = seq_name.split("_")[1]
             if state_name == "clump":
                 state_variable = torch.Tensor(
                     [1, 0, 0, 0])  # added extra 0's to make dim 264 for AgentAwareAttention(embed_dim // n_head)

@@ -129,7 +129,9 @@ if __name__ == '__main__':
         seq_eval = globals()[f'seq_{args.data}']
 
     if args.log_file is None:
-        log_file = os.path.join(results_dir, 'log_eval.txt')
+        # log_file = os.path.join(results_dir, 'log_eval.txt')
+        results_dir_2 = 'results/rounD_agentformer/log'
+        log_file = os.path.join(results_dir_2, 'log_eval.txt')
     else:
         log_file = args.log_file
     log_file = open(log_file, 'a+')

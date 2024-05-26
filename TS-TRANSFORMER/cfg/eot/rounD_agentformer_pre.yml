@@ -4,7 +4,7 @@ description                  : AgentFormer (Before DLow)
 results_root_dir             : results
 seed                         : 1
 dataset                      : rounD
-data_root_rounD             : E:/yjy/code/Improving-Multi-agent-Trajectory-Prediction-using-Traffic-States-on-Interactive-Driving-Scenarios-master/TS-TRANSFORMER/rounD/process_5fps_2
+data_root_rounD             : E:/yjy/code/Improving-Multi-agent-Trajectory-Prediction-using-Traffic-States-on-Interactive-Driving-Scenarios-master/TS-TRANSFORMER/rounD/merge_rounD
 #data_root_nuscenes_pred      : datasets/nuscenes_pred
 
 # ------------------- Feature Extractor -------------------------

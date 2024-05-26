@@ -84,8 +84,8 @@ if __name__ == '__main__':
 
     elif dataset == 'round':  # added for rounD dataset
         ### added ###
-        gt_dir = 'rounD/process_5fps_2/test'
-        data_root = 'rounD/process_5fps_2'
+        gt_dir = 'rounD/merge_rounD/test'
+        data_root = 'rounD/merge_rounD'
         print("rounD_in")
         seq_train, seq_test, seq_val = [], [], []
         for file in os.listdir(str(data_root) + '/train/'):

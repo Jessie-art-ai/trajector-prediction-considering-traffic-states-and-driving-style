@@ -99,8 +99,8 @@ if __name__ == '__main__':
         ### added ###
     elif dataset == 'round':  # added for rounD dataset
         ### added ###
-        gt_dir = 'rounD/process_5fps_2/test'
-        data_root = 'rounD/process_5fps_2'
+        gt_dir = 'rounD/merge_rounD/test'
+        data_root = 'rounD/merge_rounD'
         print("rounD_in")
         seq_train, seq_test, seq_val = [], [], []
         for file in os.listdir(str(data_root) + '/train/'):
@@ -228,7 +228,9 @@ if __name__ == '__main__':
                 except RuntimeError:
                     print("计算凸包错误")
 
-            plt.savefig('./plots/convex_hull/plot_' + str(count) + '.png', bbox_inches='tight')
+            plt.savefig('E:/yjy/code/Improving-Multi-agent-Trajectory-Prediction-using-Traffic-States-on-Interactive'
+                        '-Driving-Scenarios-master/TS-TRANSFORMER/plots/convex_hull/plot_' + str(count) + '.png',
+                        bbox_inches='tight')
             plt.close()
             print("plotted graph no {}".format(count))
             count = count + 1
